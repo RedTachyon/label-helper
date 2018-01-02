@@ -1,0 +1,15 @@
+{
+  "name": "label-helper",
+  "version": "0.1.0",
+  "description": "Small app for labelling data",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "RedTachyon",
+  "license": "WTFPL"
+}
