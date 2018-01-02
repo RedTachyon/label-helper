@@ -32,6 +32,7 @@ window.onload = function () {
 
         let currentData1 = allData1.slice(108500, 110000);
         let currentData2 = allData2.slice(108500, 110000);
+        console.log(currentData1[0].x);
 
         const chart = new CanvasJS.Chart("chartContainer", {
             //animationEnabled: true,
@@ -44,28 +45,34 @@ window.onload = function () {
                 includeZero: false,
                 crosshair: {
                     enabled: true,
-                    snapToDataPoint: true,
-                }
+                    snapToDataPoint: false,
+                },
+                gridColor: "grey",
+                gridThickness: .5,
             },
             axisY: {
                 includeZero: false,
                 crosshair: {
                     enabled: true,
-                    snapToDataPoint: true,
-                }
+                    snapToDataPoint: false,
+                },
+                gridColor: "grey",
+                gridThickness: .5,
             },
             data: [
                 {
                     type: "line",
                     dataPoints: currentData1,
+                    highlightEnabled: false,
                 },
                 {
                     type: "line",
                     dataPoints: currentData2,
-
+                    highlightEnabled: false,
                 }
             ]
         });
+        console.log('hi');
 
         chart.render();
 
