@@ -1,38 +1,27 @@
 /* global d3 */
 'use strict';
 
-function linspace(min, max, num) {
-    return _.range(min, max, (max - min) / num);
-}
-
-function updateWith(array, newArray) {
-    for (let i = 0; i <= array.length; i++) {
-        array[i] = newArray[i];
-    }
-}
-
 window.onload = function () {
-
     d3.csv('data/Tdata.csv', (data) => {
         let allData1 = data.map((point) => {
             return {
                 x: parseFloat(point.time),
                 y: parseFloat(point.T1),
-                //T2: parseFloat(point.T2)
-            }
+            };
         });
 
         let allData2 = data.map((point) => {
             return {
                 x: parseFloat(point.time),
                 y: parseFloat(point.T2),
-            }
+            };
         });
-        console.log(allData1);
 
-        let currentData1 = allData1.slice(108500, 110000);
-        let currentData2 = allData2.slice(108500, 110000);
-        console.log(currentData1[0].x);
+        let pointer = 0;
+        let windowLength = 1500;
+
+        let currentData1 = allData1.slice(pointer, pointer + windowLength);
+        let currentData2 = allData2.slice(pointer, pointer + windowLength);
 
         const chart = new CanvasJS.Chart("chartContainer", {
             //animationEnabled: true,
@@ -72,10 +61,9 @@ window.onload = function () {
                 }
             ]
         });
-        console.log('hi');
-
         chart.render();
 
+        /* BINDINGS */
         const canvas = document.getElementsByClassName("canvasjs-chart-canvas")[1];
         canvas.addEventListener("click", (event) => {
             let xPixel = event.clientX;
@@ -90,16 +78,29 @@ window.onload = function () {
         document.onkeydown = (event) => {
             console.log(event.key);
             if (event.key === "ArrowRight") {
-                for (let i = 0; i < data.length; i++) {
+                if (pointer + windowLength < allData1.length) {
+                    pointer += windowLength;
                 }
+
+                chart.options.data[0].dataPoints = allData1.slice(pointer, pointer + windowLength);
+                chart.options.data[1].dataPoints = allData2.slice(pointer, pointer + windowLength);
+
                 chart.render();
             } else if (event.key === "ArrowLeft") {
-                for (let i = 0; i < data.length; i++) {
+                if (pointer > 0) {
+                    pointer -= windowLength;
                 }
+
+                chart.options.data[0].dataPoints = allData1.slice(pointer, pointer + windowLength);
+                chart.options.data[1].dataPoints = allData2.slice(pointer, pointer + windowLength);
 
                 chart.render();
             }
         };
+
+        document.getElementById("test").onclick = () => {
+            sendData({a: "thing"});
+        }
 
     });
 
