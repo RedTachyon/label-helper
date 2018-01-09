@@ -112,7 +112,7 @@ window.onload = function () {
             console.log(event.key);
             if (event.key === "ArrowRight") {
 
-                sendData(saver);
+                if (saver.noises.length > 0 || saver.jumps.length > 0) sendData(saver);
 
                 if (pointer + windowLength < allData1.length) {
                     pointer += windowLength;
@@ -136,10 +136,6 @@ window.onload = function () {
                 document.getElementById("pointer").innerText = pointer.toString();
 
             }
-        };
-
-        document.getElementById("test").onclick = () => {
-            sendData(saver);
         };
 
         document.getElementById("mode").onclick = () => {
