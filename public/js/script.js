@@ -1,6 +1,23 @@
 /* global d3 */
 'use strict';
 
+function updateChart(chart, data1, data2) {
+    chart.options.data[0].dataPoints = data1;
+    chart.options.data[1].dataPoints = data2;
+
+    chart.render();
+}
+
+const saver = {
+    id: 0, // ID of the window
+    noises: [],//[[1.213, 2.131231], [2.5325, 3.7542]], // array of pairs of numbers
+    jumps: [],//[3.1242, 4.31242] // array of numbers
+};
+
+let mode = 'jump';
+let noiseStep = 0;
+let noiseTemp = [];
+
 window.onload = function () {
     d3.csv('data/Tdata.csv', (data) => {
         let allData1 = data.map((point) => {
@@ -73,34 +90,62 @@ window.onload = function () {
             let y = chart.axisY[0].convertPixelToValue(yPixel);
             console.log(x, y);
 
+            if (mode === "jump") {
+                saver.jumps.push(x.toFixed(4));
+            } else if (mode === "noise") {
+                if (noiseStep === 0) {
+                    noiseStep++;
+                    noiseTemp.push(x.toFixed(4));
+                } else if (noiseStep === 1) {
+                    noiseStep = 0;
+                    noiseTemp.push(x.toFixed(4));
+                    saver.noises.push(noiseTemp.slice());
+                    noiseTemp = [];
+                }
+            }
+
         });
 
         document.onkeydown = (event) => {
             console.log(event.key);
             if (event.key === "ArrowRight") {
+
+                sendData(saver);
+
                 if (pointer + windowLength < allData1.length) {
                     pointer += windowLength;
                 }
 
-                chart.options.data[0].dataPoints = allData1.slice(pointer, pointer + windowLength);
-                chart.options.data[1].dataPoints = allData2.slice(pointer, pointer + windowLength);
+                saver.id = pointer;
+                saver.jumps = [];
+                saver.noises = [];
 
-                chart.render();
+                updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                    allData2.slice(pointer, pointer + windowLength));
+
             } else if (event.key === "ArrowLeft") {
                 if (pointer > 0) {
                     pointer -= windowLength;
                 }
 
-                chart.options.data[0].dataPoints = allData1.slice(pointer, pointer + windowLength);
-                chart.options.data[1].dataPoints = allData2.slice(pointer, pointer + windowLength);
+                updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                    allData2.slice(pointer, pointer + windowLength));
 
-                chart.render();
             }
         };
 
         document.getElementById("test").onclick = () => {
-            sendData({a: "thing"});
-        }
+            sendData(saver);
+        };
+
+        document.getElementById("mode").onclick = () => {
+            if (mode === "jump") {
+                mode = "noise";
+            } else if (mode === "noise") {
+                mode = "jump";
+            }
+            document.getElementById("modename").innerText = mode;
+        };
 
     });
 

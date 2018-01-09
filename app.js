@@ -20,6 +20,15 @@ app.use(bodyParser.json());
 app.route('/data').post((req, res) => {
     console.log("Received a post request");
     console.log(req.body);
+
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1;
+
+    let path = `out/${dd}_${mm}_${req.body.id}.json`; // Change test to out
+    console.log(path);
+    fs.writeFileSync(path, JSON.stringify(req.body));
+
     res.end('Here we go');
 });
 
