@@ -96,11 +96,13 @@ window.onload = function () {
                 if (noiseStep === 0) {
                     noiseStep++;
                     noiseTemp.push(x.toFixed(4));
+                    document.getElementById("noiseStep").innerText = "End";
                 } else if (noiseStep === 1) {
                     noiseStep = 0;
                     noiseTemp.push(x.toFixed(4));
                     saver.noises.push(noiseTemp.slice());
                     noiseTemp = [];
+                    document.getElementById("noiseStep").innerText = "Start";
                 }
             }
 
@@ -123,6 +125,7 @@ window.onload = function () {
                 updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                     allData2.slice(pointer, pointer + windowLength));
 
+                document.getElementById("pointer").innerText = pointer.toString();
             } else if (event.key === "ArrowLeft") {
                 if (pointer > 0) {
                     pointer -= windowLength;
@@ -130,6 +133,7 @@ window.onload = function () {
 
                 updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                     allData2.slice(pointer, pointer + windowLength));
+                document.getElementById("pointer").innerText = pointer.toString();
 
             }
         };
@@ -141,8 +145,12 @@ window.onload = function () {
         document.getElementById("mode").onclick = () => {
             if (mode === "jump") {
                 mode = "noise";
+                document.getElementById("noiseStep").innerText = "Start";
             } else if (mode === "noise") {
                 mode = "jump";
+                document.getElementById("noiseStep").innerText = "None";
+            } else {
+                console.log("Wrong mode!")
             }
             document.getElementById("modename").innerText = mode;
         };
