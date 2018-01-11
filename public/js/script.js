@@ -89,7 +89,7 @@ window.onload = function () {
             let x = chart.axisX[0].convertPixelToValue(xPixel);
             let y = chart.axisY[0].convertPixelToValue(yPixel);
             console.log(x, y);
-
+            // identify the point index
             if (mode === "jump") {
                 saver.jumps.push(x.toFixed(4));
             } else if (mode === "noise") {
@@ -154,3 +154,11 @@ window.onload = function () {
     });
 
 };
+
+/*
+* pokazywać punkty
+* opcja pokazywania wcześniej zapisanych punktów
+* zapisywać indeks punktu
+* zmienić format zapisu (w jednym pliku)?
+* zakładka (część punktów z poprzedniego/następnego okna)
+*/
