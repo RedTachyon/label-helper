@@ -35,4 +35,11 @@ function sendData(data) {
     XHR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     // Finally, send our data.
     XHR.send(urlEncodedData);
+
+    if (XHR.readyState === 4) {
+        if (XHR.status === 200) {
+            let data = XHR.responseText;
+            return data;
+        }
+    }
 }
