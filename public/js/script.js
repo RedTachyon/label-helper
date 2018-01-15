@@ -8,15 +8,35 @@ function updateChart(chart, data1, data2) {
     chart.render();
 }
 
-const saver = {
-    id: 0, // ID of the window
-    noises: [],//[[1.213, 2.131231], [2.5325, 3.7542]], // array of pairs of numbers
-    jumps: [],//[3.1242, 4.31242] // array of numbers
-};
+function print(whatever) {
+    console.log(whatever);
+}
+
+function reactToClick(chart, event) {
+    let xPixel = event.clientX;
+    let yPixel = event.clientY;
+
+    let x = chart.axisX[0].convertPixelToValue(xPixel);
+    let y = chart.axisY[0].convertPixelToValue(yPixel);
+    console.log(x, y);
+    // identify the point index
+
+    let print = (whatever) => {
+        console.log(whatever);
+    };
+
+    if (mode === "jump") {
+        $.post('/data', {mode:mode, noiseStep:-1, value:x}, print);
+    } else if (mode === "noise") {
+        $.post('/data',{mode:mode, noiseStep:noiseStep, value:x}, print);
+        noiseStep = (noiseStep + 1) % 2;
+        document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
+    }
+
+}
 
 let mode = 'jump';
 let noiseStep = 0;
-let noiseTemp = [];
 
 window.onload = function () {
     d3.csv('data/Tdata.csv', (data) => {
@@ -82,45 +102,15 @@ window.onload = function () {
 
         /* BINDINGS */
         const canvas = document.getElementsByClassName("canvasjs-chart-canvas")[1];
-        canvas.addEventListener("click", (event) => {
-            let xPixel = event.clientX;
-            let yPixel = event.clientY;
-
-            let x = chart.axisX[0].convertPixelToValue(xPixel);
-            let y = chart.axisY[0].convertPixelToValue(yPixel);
-            console.log(x, y);
-            // identify the point index
-            if (mode === "jump") {
-                saver.jumps.push(x.toFixed(4));
-            } else if (mode === "noise") {
-                if (noiseStep === 0) {
-                    noiseStep++;
-                    noiseTemp.push(x.toFixed(4));
-                    document.getElementById("noiseStep").innerText = "End";
-                } else if (noiseStep === 1) {
-                    noiseStep = 0;
-                    noiseTemp.push(x.toFixed(4));
-                    saver.noises.push(noiseTemp.slice());
-                    noiseTemp = [];
-                    document.getElementById("noiseStep").innerText = "Start";
-                }
-            }
-
-        });
+        canvas.addEventListener("click", (event) => reactToClick(chart, event));
 
         document.onkeydown = (event) => {
-            console.log(event.key);
+            //console.log(event.key);
             if (event.key === "ArrowRight") {
-
-                if (saver.noises.length > 0 || saver.jumps.length > 0) sendData(saver);
 
                 if (pointer + windowLength < allData1.length) {
                     pointer += windowLength;
                 }
-
-                saver.id = pointer;
-                saver.jumps = [];
-                saver.noises = [];
 
                 updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                     allData2.slice(pointer, pointer + windowLength));
@@ -141,7 +131,7 @@ window.onload = function () {
         document.getElementById("mode").onclick = () => {
             if (mode === "jump") {
                 mode = "noise";
-                document.getElementById("noiseStep").innerText = "Start";
+                document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
             } else if (mode === "noise") {
                 mode = "jump";
                 document.getElementById("noiseStep").innerText = "None";
@@ -151,6 +141,10 @@ window.onload = function () {
             document.getElementById("modename").innerText = mode;
         };
 
+        document.getElementById("undo").onclick = () => {
+          $.post("/undo", "boom", print);
+        };
+
     });
 
 };
@@ -158,7 +152,7 @@ window.onload = function () {
 /*
 * pokazywać punkty
 * opcja pokazywania wcześniej zapisanych punktów
-* zapisywać indeks punktu
+* zapisywać indeks punktu <- snap to datapoint, use built-in event handler?
 * zmienić format zapisu (w jednym pliku)?
 * zakładka (część punktów z poprzedniego/następnego okna)
 */

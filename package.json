@@ -4,12 +4,17 @@
   "description": "Small app for labelling data",
   "main": "app.js",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "read-last-lines": "^1.3.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "RedTachyon",
-  "license": "WTFPL"
+  "license": "WTFPL",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/RedTachyon/label-helper"
+  }
 }
