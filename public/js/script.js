@@ -141,6 +141,10 @@ window.onload = function () {
             document.getElementById("modename").innerText = mode;
         };
 
+        document.getElementById("undo").onclick = () => {
+          $.post("/undo", "boom", print);
+        };
+
     });
 
 };
