@@ -74,7 +74,7 @@ app.listen(port, () => {
 /*
 * TO DO:
 *   undo #
-*   more user-friendly controls
+*   more user-friendly controls #
 *   display the points marked #
 *
  */

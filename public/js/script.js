@@ -38,7 +38,20 @@ function drawLines(chart, res) {
     lines = lines.map(JSON.parse);
     //console.log(lines);
     lines = lines.map((elem) => {
-        return {value: elem.value, color: "#D22"};
+        let color;
+        switch (elem.noiseStep) {
+            case "-1":
+                color = "#22D";
+                break;
+            case "0":
+                color = "#2D2";
+                break;
+            case "1":
+                color = "#D22";
+                break;
+        }
+        //console.log(color);
+        return {value: elem.value, color: color};
     });
     chart.options.axisX.stripLines = lines;
     chart.render();
@@ -120,25 +133,36 @@ window.onload = function () {
         // Switch window
         document.onkeydown = (event) => {
             //console.log(event.key);
-            if (event.key === "ArrowRight") {
 
-                if (pointer + windowLength < allData1.length) {
-                    pointer += windowLength;
-                }
+            switch (event.key) {
+                case "ArrowRight":
+                    if (pointer + windowLength < allData1.length) {
+                        pointer += windowLength;
+                    }
 
-                updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
-                    allData2.slice(pointer, pointer + windowLength + 100));
+                    updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
+                        allData2.slice(pointer, pointer + windowLength + 100));
 
-                document.getElementById("pointer").innerText = pointer.toString();
-            } else if (event.key === "ArrowLeft") {
-                if (pointer > 0) {
-                    pointer -= windowLength;
-                }
+                    document.getElementById("pointer").innerText = pointer.toString();
+                    break;
+                case "ArrowLeft":
+                    if (pointer > 0) {
+                        pointer -= windowLength;
+                    }
 
-                updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
-                    allData2.slice(pointer, pointer + windowLength + 100));
-                document.getElementById("pointer").innerText = pointer.toString();
-
+                    updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
+                        allData2.slice(pointer, pointer + windowLength + 100));
+                    document.getElementById("pointer").innerText = pointer.toString();
+                    break;
+                case "u":
+                    document.getElementById("undo").click();
+                    break;
+                case "m":
+                    document.getElementById("mode").click();
+                    break;
+                case "j":
+                    noiseStep = (noiseStep + 1) % 2;
+                    document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
             }
         };
 
