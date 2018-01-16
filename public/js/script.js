@@ -81,7 +81,7 @@ window.onload = function () {
                 includeZero: false,
                 crosshair: {
                     enabled: true,
-                    snapToDataPoint: false,
+                    snapToDataPoint: true,
                 },
                 gridColor: "grey",
                 gridThickness: .5,
@@ -91,7 +91,7 @@ window.onload = function () {
                 includeZero: false,
                 crosshair: {
                     enabled: true,
-                    snapToDataPoint: false,
+                    snapToDataPoint: true,
                 },
                 gridColor: "grey",
                 gridThickness: .5,
@@ -165,9 +165,9 @@ window.onload = function () {
 };
 
 /*
-* pokazywać punkty
-* opcja pokazywania wcześniej zapisanych punktów
+* pokazywać punkty #
+* opcja pokazywania wcześniej zapisanych punktów #
 * zapisywać indeks punktu <- snap to datapoint, use built-in event handler?
 * zmienić format zapisu (w jednym pliku)? #
-* zakładka (część punktów z poprzedniego/następnego okna)
+* zakładka (część punktów z poprzedniego/następnego okna) #
 */
