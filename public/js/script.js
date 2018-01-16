@@ -21,18 +21,28 @@ function reactToClick(chart, event) {
     console.log(x, y);
     // identify the point index
 
-    let print = (whatever) => {
-        console.log(whatever);
-    };
-
     if (mode === "jump") {
-        $.post('/data', {mode:mode, noiseStep:-1, value:x}, print);
+        $.post('/data', {mode:mode, noiseStep:-1, value:x}, (res) => drawLines(chart, res));
     } else if (mode === "noise") {
-        $.post('/data',{mode:mode, noiseStep:noiseStep, value:x}, print);
+        $.post('/data',{mode:mode, noiseStep:noiseStep, value:x}, (res) => drawLines(chart, res));
         noiseStep = (noiseStep + 1) % 2;
         document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
     }
 
+}
+
+function drawLines(chart, res) {
+    let lines = res.split('\n');
+    lines = lines.slice(0, lines.length-1);
+    // noinspection JSCheckFunctionSignatures
+    lines = lines.map(JSON.parse);
+    //console.log(lines);
+    lines = lines.map((elem) => {
+        return {value: elem.value, color: "#D22"};
+    });
+    chart.options.axisX.stripLines = lines;
+    chart.render();
+    console.log(chart.options.axisX.stripLines);
 }
 
 let mode = 'jump';
@@ -57,8 +67,8 @@ window.onload = function () {
         let pointer = 0;
         let windowLength = 1500;
 
-        let currentData1 = allData1.slice(pointer, pointer + windowLength);
-        let currentData2 = allData2.slice(pointer, pointer + windowLength);
+        let currentData1 = allData1.slice(pointer, pointer + windowLength + 100);
+        let currentData2 = allData2.slice(pointer, pointer + windowLength + 100);
 
         const chart = new CanvasJS.Chart("chartContainer", {
             //animationEnabled: true,
@@ -75,6 +85,7 @@ window.onload = function () {
                 },
                 gridColor: "grey",
                 gridThickness: .5,
+                stripLines:[],
             },
             axisY: {
                 includeZero: false,
@@ -84,6 +95,7 @@ window.onload = function () {
                 },
                 gridColor: "grey",
                 gridThickness: .5,
+
             },
             data: [
                 {
@@ -98,12 +110,14 @@ window.onload = function () {
                 }
             ]
         });
+
         chart.render();
 
         /* BINDINGS */
         const canvas = document.getElementsByClassName("canvasjs-chart-canvas")[1];
         canvas.addEventListener("click", (event) => reactToClick(chart, event));
 
+        // Switch window
         document.onkeydown = (event) => {
             //console.log(event.key);
             if (event.key === "ArrowRight") {
@@ -112,8 +126,8 @@ window.onload = function () {
                     pointer += windowLength;
                 }
 
-                updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                    allData2.slice(pointer, pointer + windowLength));
+                updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
+                    allData2.slice(pointer, pointer + windowLength + 100));
 
                 document.getElementById("pointer").innerText = pointer.toString();
             } else if (event.key === "ArrowLeft") {
@@ -121,8 +135,8 @@ window.onload = function () {
                     pointer -= windowLength;
                 }
 
-                updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                    allData2.slice(pointer, pointer + windowLength));
+                updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
+                    allData2.slice(pointer, pointer + windowLength + 100));
                 document.getElementById("pointer").innerText = pointer.toString();
 
             }
@@ -138,11 +152,12 @@ window.onload = function () {
             } else {
                 console.log("Wrong mode!")
             }
+
             document.getElementById("modename").innerText = mode;
         };
 
         document.getElementById("undo").onclick = () => {
-          $.post("/undo", "boom", print);
+          $.post("/undo", "boom", (res) => drawLines(chart, res));
         };
 
     });
@@ -153,6 +168,6 @@ window.onload = function () {
 * pokazywać punkty
 * opcja pokazywania wcześniej zapisanych punktów
 * zapisywać indeks punktu <- snap to datapoint, use built-in event handler?
-* zmienić format zapisu (w jednym pliku)?
+* zmienić format zapisu (w jednym pliku)? #
 * zakładka (część punktów z poprzedniego/następnego okna)
 */

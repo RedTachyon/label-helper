@@ -31,9 +31,15 @@ app.route('/data').post((req, res) => {
     //console.log(path);
     //fs.writeFileSync(path, JSON.stringify(req.body));
 
-    fs.appendFile(savePath, JSON.stringify(req.body) + '\n', (err) => {if (err) throw err});
-    res.send('Here we go');
-    res.end();
+    fs.appendFile(savePath, JSON.stringify(req.body) + '\n', (err) => {
+        if (err) throw err;
+        fs.readFile(savePath, (err, data) => {
+            if (err) throw err;
+            res.send(data);
+            res.end();
+        });
+    });
+
 });
 
 app.route('/undo').post((req, res) => {
