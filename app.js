@@ -70,11 +70,3 @@ const port = 1337;
 app.listen(port, () => {
     console.log(`Port ${port} listening...`)
 });
-
-/*
-* TO DO:
-*   undo #
-*   more user-friendly controls #
-*   display the points marked #
-*
- */

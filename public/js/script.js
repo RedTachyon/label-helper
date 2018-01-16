@@ -53,12 +53,13 @@ function drawLines(chart, res) {
         //console.log(color);
         return {value: elem.value, color: color};
     });
-    chart.options.axisX.stripLines = lines;
+    chart.options.axisX.stripLines = lines; // filter
     chart.render();
     console.log(chart.options.axisX.stripLines);
 }
 
 let mode = 'jump';
+let thermometer = 1;
 let noiseStep = 0;
 
 window.onload = function () {
@@ -189,9 +190,14 @@ window.onload = function () {
 };
 
 /*
-* pokazywać punkty #
-* opcja pokazywania wcześniej zapisanych punktów #
 * zapisywać indeks punktu <- snap to datapoint, use built-in event handler?
-* zmienić format zapisu (w jednym pliku)? #
-* zakładka (część punktów z poprzedniego/następnego okna) #
+* Wyświetlać referencję, wektor czasu i temperatury w drugim pliku
+* większy wykres (w pionie)
+* flagi dla którego termometru jest zapis
+* ukrywanie i pokazywanie danej linii
+* zmiana szybkości przechodzenia
+* powiększenie (!)
+* maybe: skok w górę, skok w dół
+* zapisywanie backup
+* wydajność - nie wysyłać wszystkich linijek
 */

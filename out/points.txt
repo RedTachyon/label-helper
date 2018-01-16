@@ -1,2 +1,0 @@
-{"mode":"jump","noiseStep":"-1","value":"935.7691381225385"}
-{"mode":"jump","noiseStep":"-1","value":"937.7670127240262"}
