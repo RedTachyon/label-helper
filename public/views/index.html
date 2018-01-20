@@ -19,6 +19,14 @@
 
 <div id="settings">
     <button id="mode">Change mode (m)</button>
+    <button id="undo">Undo (u) (!)</button>
+    <button id="switchNoise">Change noise step (j)</button>
+    <button id="toggleRed">Toggle red visibility (1)</button>
+    <button id="toggleBlue">Toggle blue visibility (2)</button>
+    <br/>
+    Current window length: <span id="lengthValue">1600</span> <input type="number" step="100" id="windowLength" value="1600" class="windowParams" maxlength="6"> <button id="sendLength">Set</button>
+    <br/>
+    Current window step: <span id="stepValue">1500</span> <input type="number" step="100" id="windowStep" value="1500" class="windowParams" maxlength="6"> <button id="sendStep">Set</button>
     <h1>Current mode: <span id="modename">jump</span></h1>
     <br/>
     <h2>Current noise step: <span id="noiseStep">None</span></h2>
@@ -27,7 +35,7 @@
 </div>
 
 <div id="buttons2">
-    <button id="undo">Undo (u)</button>
+
 
 </div>
 

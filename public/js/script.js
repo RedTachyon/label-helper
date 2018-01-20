@@ -53,7 +53,9 @@ function drawLines(chart, res) {
         //console.log(color);
         return {value: elem.value, color: color};
     });
-    chart.options.axisX.stripLines = lines; // filter
+    chart.options.axisX.stripLines = lines.filter((elem) => {
+
+    }); // filter
     chart.render();
     console.log(chart.options.axisX.stripLines);
 }
@@ -61,6 +63,9 @@ function drawLines(chart, res) {
 let mode = 'jump';
 let thermometer = 1;
 let noiseStep = 0;
+let pointer;
+let windowLength;
+let windowStep;
 
 window.onload = function () {
     d3.csv('data/Tdata.csv', (data) => {
@@ -78,11 +83,12 @@ window.onload = function () {
             };
         });
 
-        let pointer = 0;
-        let windowLength = 1500;
+        pointer = 0;
+        windowLength = 1600;
+        windowStep = 1500;
 
-        let currentData1 = allData1.slice(pointer, pointer + windowLength + 100);
-        let currentData2 = allData2.slice(pointer, pointer + windowLength + 100);
+        let currentData1 = allData1.slice(pointer, pointer + windowLength);
+        let currentData2 = allData2.slice(pointer, pointer + windowLength);
 
         const chart = new CanvasJS.Chart("chartContainer", {
             //animationEnabled: true,
@@ -116,11 +122,15 @@ window.onload = function () {
                     type: "line",
                     dataPoints: currentData1,
                     highlightEnabled: false,
+                    visible: true,
+                    color: '#33C',
                 },
                 {
                     type: "line",
                     dataPoints: currentData2,
                     highlightEnabled: false,
+                    visible: true,
+                    color: '#C33',
                 }
             ]
         });
@@ -138,21 +148,21 @@ window.onload = function () {
             switch (event.key) {
                 case "ArrowRight":
                     if (pointer + windowLength < allData1.length) {
-                        pointer += windowLength;
+                        pointer += windowStep;
                     }
 
-                    updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
-                        allData2.slice(pointer, pointer + windowLength + 100));
+                    updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                        allData2.slice(pointer, pointer + windowLength));
 
                     document.getElementById("pointer").innerText = pointer.toString();
                     break;
                 case "ArrowLeft":
                     if (pointer > 0) {
-                        pointer -= windowLength;
+                        pointer -= windowStep;
                     }
 
-                    updateChart(chart, allData1.slice(pointer, pointer + windowLength + 100),
-                        allData2.slice(pointer, pointer + windowLength + 100));
+                    updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                        allData2.slice(pointer, pointer + windowLength));
                     document.getElementById("pointer").innerText = pointer.toString();
                     break;
                 case "u":
@@ -162,8 +172,8 @@ window.onload = function () {
                     document.getElementById("mode").click();
                     break;
                 case "j":
-                    noiseStep = (noiseStep + 1) % 2;
-                    document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
+                    document.getElementById("switchNoise").click();
+                    break;
             }
         };
 
@@ -185,14 +195,47 @@ window.onload = function () {
           $.post("/undo", "boom", (res) => drawLines(chart, res));
         };
 
+        document.getElementById("switchNoise").onclick = () => {
+            noiseStep = (noiseStep + 1) % 2;
+            document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
+        };
+
+        document.getElementById("sendLength").onclick = () => {
+            let value = document.getElementById("windowLength").value;
+            value = parseInt(value);
+            windowLength = value;
+            document.getElementById("lengthValue").innerText = windowLength;
+        };
+
+        document.getElementById("sendStep").onclick = () => {
+            let value = document.getElementById("windowStep").value;
+            value = parseInt(value);
+            windowStep = value;
+            document.getElementById("stepValue").innerText = windowStep;
+        };
+
+        document.getElementById("windowLength").onkeydown = (e) => {
+            if (e.keyCode === 13) {
+                document.getElementById("sendLength").click();
+
+            }
+        };
+
+        document.getElementById("windowStep").onkeydown = (e) => {
+            if (e.keyCode === 13) {
+                document.getElementById("sendStep").click();
+            }
+        };
+
+
     });
 
 };
 
 /*
-* zapisywać indeks punktu <- snap to datapoint, use built-in event handler?
+* zapisywać indeks punktu <- snap to datapoint, use built-in event handler? # meh
 * Wyświetlać referencję, wektor czasu i temperatury w drugim pliku
-* większy wykres (w pionie)
+* większy wykres (w pionie) #
 * flagi dla którego termometru jest zapis
 * ukrywanie i pokazywanie danej linii
 * zmiana szybkości przechodzenia
@@ -200,4 +243,5 @@ window.onload = function () {
 * maybe: skok w górę, skok w dół
 * zapisywanie backup
 * wydajność - nie wysyłać wszystkich linijek
+* albo tylko nie pokazywać wszystkich linijek prostym filtrem
 */
