@@ -18,25 +18,20 @@
 <div id="chartContainer" style="height: 65%; width: 100%;"></div>
 
 <div id="settings">
+    <button id="thermometer">Change thermometer (t)</button>
     <button id="mode">Change mode (m)</button>
     <button id="undo">Undo (u) (!)</button>
     <button id="switchNoise">Change noise step (j)</button>
-    <button id="toggleRed">Toggle red visibility (1)</button>
-    <button id="toggleBlue">Toggle blue visibility (2)</button>
+    <button id="toggleBlue">Toggle blue visibility (1)</button>
+    <button id="toggleRed">Toggle red visibility (2)</button>
     <br/>
     Current window length: <span id="lengthValue">1600</span> <input type="number" step="100" id="windowLength" value="1600" class="windowParams" maxlength="6"> <button id="sendLength">Set</button>
     <br/>
     Current window step: <span id="stepValue">1500</span> <input type="number" step="100" id="windowStep" value="1500" class="windowParams" maxlength="6"> <button id="sendStep">Set</button>
-    <h1>Current mode: <span id="modename">jump</span></h1>
-    <br/>
-    <h2>Current noise step: <span id="noiseStep">None</span></h2>
-    <br/>
+    <h3>Current thermometer: <span id="activeTherm">Blue</span></h3>
+    <h3>Current mode: <span id="modename">jump</span></h3>
+    <h3>Current noise step: <span id="noiseStep">None</span></h3>
     <h3>Pointer location: <span id="pointer">0</span></h3>
-</div>
-
-<div id="buttons2">
-
-
 </div>
 
 </body>

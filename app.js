@@ -20,16 +20,18 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+app.route('/data').get((req, res) => {
+    fs.readFile(savePath, (err, data) => {
+        if (err) throw err;
+        res.send(data);
+        res.end();
+    });
+});
+
 app.route('/data').post((req, res) => {
     //console.log("Received a post request");
     console.log(req.body);
-
-    // let today = new Date();
-    // let dd = today.getDate();
-    // let mm = today.getMonth() + 1;
-
-    //console.log(path);
-    //fs.writeFileSync(path, JSON.stringify(req.body));
 
     fs.appendFile(savePath, JSON.stringify(req.body) + '\n', (err) => {
         if (err) throw err;
@@ -39,7 +41,6 @@ app.route('/data').post((req, res) => {
             res.end();
         });
     });
-
 });
 
 app.route('/undo').post((req, res) => {
@@ -62,11 +63,8 @@ app.route('/undo').post((req, res) => {
     });
 });
 
-app.route('/data').get((req, res) => {
-    res.end("This isn't the request you're looking for.")
-});
-
 const port = 1337;
+
 app.listen(port, () => {
     console.log(`Port ${port} listening...`)
 });

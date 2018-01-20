@@ -5,6 +5,7 @@ function updateChart(chart, data1, data2) {
     chart.options.data[0].dataPoints = data1;
     chart.options.data[1].dataPoints = data2;
 
+    $.get("/data", (res) => drawLines(chart, res));
     chart.render();
 }
 
@@ -22,9 +23,9 @@ function reactToClick(chart, event) {
     // identify the point index
 
     if (mode === "jump") {
-        $.post('/data', {mode:mode, noiseStep:-1, value:x}, (res) => drawLines(chart, res));
+        $.post('/data', {mode:mode, noiseStep:-1, thermometer, value:x.toFixed(2)}, (res) => drawLines(chart, res));
     } else if (mode === "noise") {
-        $.post('/data',{mode:mode, noiseStep:noiseStep, value:x}, (res) => drawLines(chart, res));
+        $.post('/data',{mode:mode, noiseStep, thermometer, value:x.toFixed(2)}, (res) => drawLines(chart, res));
         noiseStep = (noiseStep + 1) % 2;
         document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
     }
@@ -36,32 +37,32 @@ function drawLines(chart, res) {
     lines = lines.slice(0, lines.length-1);
     // noinspection JSCheckFunctionSignatures
     lines = lines.map(JSON.parse);
-    //console.log(lines);
+
     lines = lines.map((elem) => {
         let color;
-        switch (elem.noiseStep) {
-            case "-1":
-                color = "#22D";
-                break;
-            case "0":
-                color = "#2D2";
-                break;
-            case "1":
-                color = "#D22";
-                break;
-        }
-        //console.log(color);
-        return {value: elem.value, color: color};
+        if (elem.thermometer === "0" && elem.noiseStep === "-1") color = "#22D";
+        if (elem.thermometer === "0" && elem.noiseStep === "0") color = "#88D";
+        if (elem.thermometer === "0" && elem.noiseStep === "1") color = "#82A";
+
+        if (elem.thermometer === "1" && elem.noiseStep === "-1") color = "#D22";
+        if (elem.thermometer === "1" && elem.noiseStep === "0") color = "#D88";
+        if (elem.thermometer === "1" && elem.noiseStep === "1") color = "#D82";
+
+        return {value: elem.value, color: color, thickness: 2};
     });
     chart.options.axisX.stripLines = lines.filter((elem) => {
-
+        let points = chart.options.data[0].dataPoints;
+        let start = points[0].x;
+        let end = points[points.length-1].x;
+        return elem.value >= start && elem.value <= end;
     }); // filter
     chart.render();
-    console.log(chart.options.axisX.stripLines);
+    //console.log(chart.options.data[0].dataPoints[0].x);
+    //console.log(chart.options.axisX.stripLines);
 }
 
 let mode = 'jump';
-let thermometer = 1;
+let thermometer = 0;
 let noiseStep = 0;
 let pointer;
 let windowLength;
@@ -137,6 +138,8 @@ window.onload = function () {
 
         chart.render();
 
+        $.get("/data", (res) => drawLines(chart, res));
+
         /* BINDINGS */
         const canvas = document.getElementsByClassName("canvasjs-chart-canvas")[1];
         canvas.addEventListener("click", (event) => reactToClick(chart, event));
@@ -173,6 +176,15 @@ window.onload = function () {
                     break;
                 case "j":
                     document.getElementById("switchNoise").click();
+                    break;
+                case "t":
+                    document.getElementById("thermometer").click();
+                    break;
+                case "1":
+                    document.getElementById("toggleBlue").click();
+                    break;
+                case "2":
+                    document.getElementById("toggleRed").click();
                     break;
             }
         };
@@ -227,6 +239,21 @@ window.onload = function () {
             }
         };
 
+        document.getElementById("thermometer").onclick = () => {
+            thermometer = (thermometer + 1) % 2;
+            document.getElementById("activeTherm").innerText = thermometer ? "Red" : "Blue";
+        };
+
+        document.getElementById("toggleBlue").onclick = () => {
+            chart.options.data[0].visible = !chart.options.data[0].visible;
+            chart.render();
+        };
+
+        document.getElementById("toggleRed").onclick = () => {
+            chart.options.data[1].visible = !chart.options.data[1].visible;
+            chart.render();
+        };
+
 
     });
 
@@ -234,14 +261,11 @@ window.onload = function () {
 
 /*
 * zapisywać indeks punktu <- snap to datapoint, use built-in event handler? # meh
-* Wyświetlać referencję, wektor czasu i temperatury w drugim pliku
-* większy wykres (w pionie) #
-* flagi dla którego termometru jest zapis
-* ukrywanie i pokazywanie danej linii
-* zmiana szybkości przechodzenia
-* powiększenie (!)
+* Wyświetlać referencję; wektor czasu i temperatury w drugim pliku
 * maybe: skok w górę, skok w dół
 * zapisywanie backup
-* wydajność - nie wysyłać wszystkich linijek
-* albo tylko nie pokazywać wszystkich linijek prostym filtrem
+*
+* IMMEDIATE TO DO:
+*
 */
+
