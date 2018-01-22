@@ -103,6 +103,7 @@ window.onload = function () {
                 crosshair: {
                     enabled: true,
                     snapToDataPoint: true,
+                    color: "blue",
                 },
                 gridColor: "grey",
                 gridThickness: .5,
@@ -113,6 +114,7 @@ window.onload = function () {
                 crosshair: {
                     enabled: true,
                     snapToDataPoint: true,
+                    color: "blue",
                 },
                 gridColor: "grey",
                 gridThickness: .5,
@@ -161,7 +163,8 @@ window.onload = function () {
                     break;
                 case "ArrowLeft":
                     if (pointer > 0) {
-                        pointer -= windowStep;
+                        pointer = Math.max(pointer - windowStep, 0);
+                        //pointer -= windowStep;
                     }
 
                     updateChart(chart, allData1.slice(pointer, pointer + windowLength),
@@ -229,19 +232,32 @@ window.onload = function () {
         document.getElementById("windowLength").onkeydown = (e) => {
             if (e.keyCode === 13) {
                 document.getElementById("sendLength").click();
-
             }
+            e.stopPropagation();
         };
 
         document.getElementById("windowStep").onkeydown = (e) => {
             if (e.keyCode === 13) {
                 document.getElementById("sendStep").click();
             }
+            e.stopPropagation();
         };
+
+        document.getElementById("movePointer").onkeydown = (e) => {
+            if (e.keyCode === 13) {
+                document.getElementById("sendPointer").click();
+            }
+            e.stopPropagation();
+        }
 
         document.getElementById("thermometer").onclick = () => {
             thermometer = (thermometer + 1) % 2;
             document.getElementById("activeTherm").innerText = thermometer ? "Red" : "Blue";
+            let color = chart.options.axisX.crosshair.color;
+            let newColor = (color === "blue") ? "red" : "blue";
+            chart.options.axisX.crosshair.color = newColor;
+            chart.options.axisY.crosshair.color = newColor;
+            chart.render();
         };
 
         document.getElementById("toggleBlue").onclick = () => {
@@ -254,6 +270,18 @@ window.onload = function () {
             chart.render();
         };
 
+        document.getElementById("sendPointer").onclick = () => {
+            pointer = parseInt(document.getElementById("movePointer").value);
+            pointer = Math.max(pointer, 0);
+            updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                allData2.slice(pointer, pointer + windowLength));
+
+            document.getElementById("pointer").innerText = pointer.toString();
+        };
+
+        document.getElementById("save").onclick = () => {
+            $.post('/save', "save", () => "Saved");
+        }
 
     });
 

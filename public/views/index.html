@@ -15,7 +15,7 @@
 
 <body>
 
-<div id="chartContainer" style="height: 65%; width: 100%;"></div>
+<div id="chartContainer" style="height: 60%; width: 100%;"></div>
 
 <div id="settings">
     <button id="thermometer">Change thermometer (t)</button>
@@ -28,10 +28,14 @@
     Current window length: <span id="lengthValue">1600</span> <input type="number" step="100" id="windowLength" value="1600" class="windowParams" maxlength="6"> <button id="sendLength">Set</button>
     <br/>
     Current window step: <span id="stepValue">1500</span> <input type="number" step="100" id="windowStep" value="1500" class="windowParams" maxlength="6"> <button id="sendStep">Set</button>
+    <br/>
+    Move to pointer: <input type="number" step="100" id="movePointer" value="0" style="width: 6em;"> <button id="sendPointer">Move</button>
+    <h3>Pointer location: <span id="pointer">0</span></h3>
     <h3>Current thermometer: <span id="activeTherm">Blue</span></h3>
     <h3>Current mode: <span id="modename">jump</span></h3>
     <h3>Current noise step: <span id="noiseStep">None</span></h3>
-    <h3>Pointer location: <span id="pointer">0</span></h3>
+    <button id="save">SAVE</button>
+
 </div>
 
 </body>

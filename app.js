@@ -63,6 +63,20 @@ app.route('/undo').post((req, res) => {
     });
 });
 
+app.route('/save').post((req, res) => {
+   fs.readFile(savePath, (err, data) => {
+       for (let i = 0; i <= 100; i++) {
+           if (!fs.existsSync(savePath + "backup" + i)) {
+               fs.writeFile(savePath + "backup" + i, data, (err) => {
+                   if (err) throw err;
+                   console.log("Saved backup to " + savePath + "backup" + i);
+               });
+               break;
+           }
+       }
+   })
+});
+
 const port = 1337;
 
 app.listen(port, () => {
