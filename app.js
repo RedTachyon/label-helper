@@ -3,6 +3,7 @@ const express = require('express');
 const path = require("path");
 const bodyParser = require("express");
 const rll = require('read-last-lines');
+const opn = require('opn');
 
 let savePath = 'out/points.txt';
 
@@ -82,3 +83,5 @@ const port = 1337;
 app.listen(port, () => {
     console.log(`Port ${port} listening...`)
 });
+
+opn('http://localhost:1337');
