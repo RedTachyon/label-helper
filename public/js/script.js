@@ -1,5 +1,11 @@
 /* global d3 */
+/* global $ */
+
 'use strict';
+
+function timeToPointer(time, ref) {
+    return (time - ref[0].x) * 100;
+}
 
 function updateChart(chart, data1, data2) {
     chart.options.data[0].dataPoints = data1;
@@ -24,7 +30,7 @@ function reactToClick(chart, event) {
 
     if (mode === "jump") {
         $.post('/data', {mode:mode, noiseStep:-1, thermometer, value:x.toFixed(2)}, (res) => drawLines(chart, res));
-    } else if (mode === "noise") {
+    } else if (mode === "noise" || mode === "hill") {
         $.post('/data',{mode:mode, noiseStep, thermometer, value:x.toFixed(2)}, (res) => drawLines(chart, res));
         noiseStep = (noiseStep + 1) % 2;
         document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
@@ -140,9 +146,32 @@ window.onload = function () {
 
         chart.render();
 
-        $.get("/data", (res) => drawLines(chart, res));
+        // Graph setup
+        $.get("/data", (res) => {
+            let lines = res.split('\n');
+            lines = lines.slice(0, lines.length-1);
+            // noinspection JSCheckFunctionSignatures
+            lines = lines.map(JSON.parse);
+            let last = lines[lines.length - 1].value;
+            pointer = Math.max(Math.round(timeToPointer(last, allData1) - (windowLength / 2)), 0);
+            // console.log(last, pointer, timeToPointer(last, allData1));
+            document.getElementById("pointer").innerText = pointer.toString();
 
-        /* BINDINGS */
+            updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                allData2.slice(pointer, pointer + windowLength));
+        });
+
+
+
+        /*
+        *
+        * BINDINGS
+        *
+        */
+
+
+
+
         const canvas = document.getElementsByClassName("canvasjs-chart-canvas")[1];
         canvas.addEventListener("click", (event) => reactToClick(chart, event));
 
@@ -197,9 +226,13 @@ window.onload = function () {
                 mode = "noise";
                 document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
             } else if (mode === "noise") {
+                mode = "hill";
+                document.getElementById("noiseStep").innerText = noiseStep ? "End" : "Start";
+            } else if (mode === "hill") {
                 mode = "jump";
                 document.getElementById("noiseStep").innerText = "None";
-            } else {
+            }
+            else {
                 console.log("Wrong mode!")
             }
 
@@ -248,7 +281,7 @@ window.onload = function () {
                 document.getElementById("sendPointer").click();
             }
             e.stopPropagation();
-        }
+        };
 
         document.getElementById("thermometer").onclick = () => {
             thermometer = (thermometer + 1) % 2;
@@ -288,11 +321,7 @@ window.onload = function () {
 };
 
 /*
-* zapisywać indeks punktu <- snap to datapoint, use built-in event handler? # meh
 * Wyświetlać referencję; wektor czasu i temperatury w drugim pliku
-* maybe: skok w górę, skok w dół
-* zapisywanie backup
-*
 * IMMEDIATE TO DO:
 *
 */
