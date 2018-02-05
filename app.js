@@ -84,4 +84,4 @@ app.listen(port, () => {
     console.log(`Port ${port} listening...`)
 });
 
-opn('http://localhost:1337');
+//opn('http://localhost:1337');
