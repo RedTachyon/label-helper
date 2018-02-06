@@ -252,6 +252,8 @@ window.onload = function () {
             let value = document.getElementById("windowLength").value;
             value = parseInt(value);
             windowLength = value;
+            updateChart(chart, allData1.slice(pointer, pointer + windowLength),
+                allData2.slice(pointer, pointer + windowLength));
             document.getElementById("lengthValue").innerText = windowLength;
         };
 

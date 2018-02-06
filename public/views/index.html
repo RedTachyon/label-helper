@@ -9,13 +9,13 @@
     <link rel="shortcut icon" type="image/ico" href="../img/favicon.ico"/>
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="../css/styles.css?v=1.0">
+    <link rel="stylesheet" href="../css/styles.css">
 
 </head>
 
 <body>
 
-<div id="chartContainer" style="height: 60%; width: 100%;"></div>
+<div id="chartContainer" style="height: 60%; width: 100%; "><div class="loader"></div></div>
 
 <div id="settings">
     <button id="thermometer">Change thermometer (t)</button>
@@ -29,11 +29,11 @@
     <br/>
     Current window step: <span id="stepValue">1500</span> <input type="number" step="100" id="windowStep" value="1500" class="windowParams" maxlength="6"> <button id="sendStep">Set</button>
     <br/>
-    Move to pointer: <input type="number" step="100" id="movePointer" value="0" style="width: 6em;"> <button id="sendPointer">Move</button>
-    <h3>Pointer location: <span id="pointer">0</span></h3>
+    Move to location: <input type="number" step="100" id="movePointer" value="0" style="width: 6em;"> <button id="sendPointer">Move</button>
+    <h3>Current location: <span id="pointer">0</span></h3>
     <h3>Current thermometer: <span id="activeTherm">Blue</span></h3>
     <h3>Current mode: <span id="modename">jump</span></h3>
-    <h3>Current noise step: <span id="noiseStep">None</span></h3>
+    <h3>Current noise/hill step: <span id="noiseStep">None</span></h3>
     <button id="save">SAVE</button>
 
 </div>
