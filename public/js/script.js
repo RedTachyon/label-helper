@@ -155,7 +155,7 @@ window.onload = function () {
             let last = lines[lines.length - 1].value;
             pointer = Math.max(Math.round(timeToPointer(last, allData1) - (windowLength / 2)), 0);
             // console.log(last, pointer, timeToPointer(last, allData1));
-            document.getElementById("pointer").innerText = pointer.toString();
+            document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
 
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                 allData2.slice(pointer, pointer + windowLength));
@@ -188,7 +188,7 @@ window.onload = function () {
                     updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                         allData2.slice(pointer, pointer + windowLength));
 
-                    document.getElementById("pointer").innerText = pointer.toString();
+                    document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
                     break;
                 case "ArrowLeft":
                     if (pointer > 0) {
@@ -198,7 +198,7 @@ window.onload = function () {
 
                     updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                         allData2.slice(pointer, pointer + windowLength));
-                    document.getElementById("pointer").innerText = pointer.toString();
+                    document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
                     break;
                 case "u":
                     document.getElementById("undo").click();
@@ -254,14 +254,14 @@ window.onload = function () {
             windowLength = value;
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                 allData2.slice(pointer, pointer + windowLength));
-            document.getElementById("lengthValue").innerText = windowLength;
+            document.getElementById("lengthValue").innerText = `${windowLength} (${windowLength/100} sec)`;
         };
 
         document.getElementById("sendStep").onclick = () => {
             let value = document.getElementById("windowStep").value;
             value = parseInt(value);
             windowStep = value;
-            document.getElementById("stepValue").innerText = windowStep;
+            document.getElementById("stepValue").innerText = `${windowStep} (${windowStep/100} sec)`;
         };
 
         document.getElementById("windowLength").onkeydown = (e) => {
@@ -311,7 +311,7 @@ window.onload = function () {
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
                 allData2.slice(pointer, pointer + windowLength));
 
-            document.getElementById("pointer").innerText = pointer.toString();
+            document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x)} sec)`
         };
 
         document.getElementById("save").onclick = () => {
@@ -325,6 +325,7 @@ window.onload = function () {
 /*
 * Wyświetlać referencję; wektor czasu i temperatury w drugim pliku
 * IMMEDIATE TO DO:
-*
+* Pointer <--> time converter
+* Reference display
 */
 
