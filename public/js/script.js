@@ -7,9 +7,10 @@ function timeToPointer(time, ref) {
     return (time - ref[0].x) * 100;
 }
 
-function updateChart(chart, data1, data2) {
+function updateChart(chart, data1, data2, dataRef) {
     chart.options.data[0].dataPoints = data1;
     chart.options.data[1].dataPoints = data2;
+    chart.options.data[2].dataPoints = dataRef;
 
     $.get("/data", (res) => drawLines(chart, res));
     chart.render();
@@ -90,12 +91,20 @@ window.onload = function () {
             };
         });
 
+        let refData = data.map((point) => {
+            return {
+                x: parseFloat(point.time),
+                y: parseFloat(point.Tref),
+            };
+        });
+
         pointer = 0;
         windowLength = 1600;
         windowStep = 1500;
 
         let currentData1 = allData1.slice(pointer, pointer + windowLength);
         let currentData2 = allData2.slice(pointer, pointer + windowLength);
+        let currentDataRef = refData.slice(pointer, pointer + windowLength);
 
         const chart = new CanvasJS.Chart("chartContainer", {
             //animationEnabled: true,
@@ -140,6 +149,13 @@ window.onload = function () {
                     highlightEnabled: false,
                     visible: true,
                     color: '#C33',
+                },
+                {
+                    type: "line",
+                    dataPoints: currentDataRef,
+                    highlightEnabled: false,
+                    visible: false,
+                    color: '#3C3'
                 }
             ]
         });
@@ -158,7 +174,8 @@ window.onload = function () {
             document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
 
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                allData2.slice(pointer, pointer + windowLength));
+                        allData2.slice(pointer, pointer + windowLength),
+                        refData.slice(pointer, pointer + windowLength));
         });
 
 
@@ -186,7 +203,8 @@ window.onload = function () {
                     }
 
                     updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                        allData2.slice(pointer, pointer + windowLength));
+                                allData2.slice(pointer, pointer + windowLength),
+                                refData.slice(pointer, pointer + windowLength));
 
                     document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
                     break;
@@ -197,7 +215,9 @@ window.onload = function () {
                     }
 
                     updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                        allData2.slice(pointer, pointer + windowLength));
+                        allData2.slice(pointer, pointer + windowLength),
+                        refData.slice(pointer, pointer + windowLength));
+
                     document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x).toFixed(2)} sec)`;
                     break;
                 case "u":
@@ -217,6 +237,9 @@ window.onload = function () {
                     break;
                 case "2":
                     document.getElementById("toggleRed").click();
+                    break;
+                case "3":
+                    document.getElementById("toggleGreen").click();
                     break;
             }
         };
@@ -253,7 +276,8 @@ window.onload = function () {
             value = parseInt(value);
             windowLength = value;
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                allData2.slice(pointer, pointer + windowLength));
+                        allData2.slice(pointer, pointer + windowLength),
+                        refData.slice(pointer, pointer + windowLength));
             document.getElementById("lengthValue").innerText = `${windowLength} (${windowLength/100} sec)`;
         };
 
@@ -305,11 +329,17 @@ window.onload = function () {
             chart.render();
         };
 
+        document.getElementById("toggleGreen").onclick = () => {
+            chart.options.data[2].visible = !chart.options.data[2].visible;
+            chart.render();
+        };
+
         document.getElementById("sendPointer").onclick = () => {
             pointer = parseInt(document.getElementById("movePointer").value);
             pointer = Math.max(pointer, 0);
             updateChart(chart, allData1.slice(pointer, pointer + windowLength),
-                allData2.slice(pointer, pointer + windowLength));
+                        allData2.slice(pointer, pointer + windowLength),
+                        refData.slice(pointer, pointer + windowLength));
 
             document.getElementById("pointer").innerText = `${pointer} (approx. ${(pointer / 100 + allData1[0].x)} sec)`
         };
